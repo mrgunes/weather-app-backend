@@ -9,6 +9,14 @@ var serverRouter = require('./routes/server');
 
 let app = express();
 
+app.use(function(req, res, next) {
+  req.header("Access-Control-Allow-Origin", "*");
+  req.header("Access-Control-Allow-Methods", "*");
+  req.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  req.header('Access-Control-Allow-Credentials', true);
+  next();
+});
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
@@ -19,15 +27,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', serverRouter);
 
-// app.use(function(req, res, next) {
-//   res.header("Access-Control-Allow-Origin", "*");
-//   res.header("Access-Control-Allow-Methods", "*");
-//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-//   res.header('Access-Control-Allow-Credentials', true);
-//   next();
-// });
+ 
+app.use('/', serverRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

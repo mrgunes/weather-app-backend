@@ -12,23 +12,18 @@ router.get('/', (req, res, next)=>{
   .catch((err)=>{res.json(err)})
 });
 
-
-router.post('/search',(req,res,next)=>{
-  let {searchCity}=req.body
-  res.send(searchCity)
-})
-
 /* GET search page. */
-router.get('/weather', (req,res,next)=>{
-  console.log(req.body)
-  axios.get(`http://api.openweathermap.org/data/2.5/weather?q=${req.body.searchCity}&appid=${apiKey}&units=metric`) 
+router.get('/:city/:unit', (req,res,next)=>{
+  console.log(req.params.city)
+  console.log(req.params.unit)
+  axios.get(`http://api.openweathermap.org/data/2.5/weather?q=${req.params.city}&appid=${apiKey}&units=metric`) 
         .then((firstRes) =>
         Promise.all([
         firstRes,
-        axios.get(`https://api.openweathermap.org/data/2.5/onecall?lat=${firstRes.data.coord.lat}&lon=${firstRes.data.coord.lon}&exclude=&appid=${apiKey}&units=${req.body.setMetric}`)
+        axios.get(`https://api.openweathermap.org/data/2.5/onecall?lat=${firstRes.data.coord.lat}&lon=${firstRes.data.coord.lon}&exclude=&appid=${apiKey}&units=${req.params.unit}`)
         ]))
         .then(([firstResponse, secondResponse]) => {
-        res.json(secondResponse.data);
+        res.json([firstResponse.data,secondResponse.data]);
         })
         .catch((err)=>{res.json(err)})
 })
